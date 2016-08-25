@@ -6,44 +6,99 @@ import java.util.Locale;
 public class Printer {
 
 	public static void main(String[] args) {
-		Printer.println("开启");
-		Printer.off();
-		Printer.print(true);
-		Printer.on();
-		Printer.print(111);
-		Printer.print(23);
+		Thread t1 = new Thread(new Runnable() {
+
+			int i = 0;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Printer.on();
+				while (i < 20) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Printer.println(Thread.currentThread().getId());
+					i++;
+				}
+				Printer.clear();
+			}
+		});
+
+		Thread t2 = new Thread(new Runnable() {
+
+			private int i = 0;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Printer.on();
+				while (i < 20) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Printer.off();
+					if (i > 3)
+						Printer.on();
+
+					Printer.println(Thread.currentThread().getId() + ":" + i);
+					i++;
+				}
+				Printer.clear();
+			}
+		});
+		 t1.start();
+		t2.start();
 	}
 
 	private static ThreadLocal<PrinterConfig> threadLocal = new ThreadLocal<>();
 	private static PrintStream ps = System.out;
-	private static boolean open = true;
+
+	private static PrinterConfig getPrinterConfig() {
+		PrinterConfig config = threadLocal.get();
+		if (config == null) {
+			config = new PrinterConfig();
+			threadLocal.set(config);
+		}
+		return config;
+	}
+
+	public static void clear() {
+		threadLocal.remove();
+	}
 
 	public static void on() {
-		open = true;		
+		getPrinterConfig().on();
 	}
 
 	public static void off() {
-		open = false;
+		getPrinterConfig().off();
 	}
 
 	public static boolean isOpen() {
-		return open;
+		return getPrinterConfig().isOpen();
 	}
 
 	public static PrintStream append(char c) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return ps;
 		return ps.append(c);
 	}
 
 	public static PrintStream append(CharSequence csq) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return ps;
 		return ps.append(csq);
 	}
 
 	public static PrintStream append(CharSequence csq, int start, int end) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return ps;
 		return ps.append(csq, start, end);
 	}
@@ -53,163 +108,163 @@ public class Printer {
 	}
 
 	public static void close() {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.close();
 	}
 
 	public static void flush() {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.flush();
 	}
 
 	public static PrintStream format(String format, Object... args) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return ps;
 		return ps.format(format, args);
 	}
 
 	public static PrintStream format(Locale l, String format, Object... args) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return ps;
 		return ps.format(l, format, args);
 	}
 
 	public static void print(boolean b) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(b);
 	}
 
 	public static void print(char c) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(c);
 	}
 
 	public static void print(char[] s) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(s);
 	}
 
 	public static void print(double d) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(d);
 	}
 
 	public static void print(float f) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(f);
 	}
 
 	public static void print(int i) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(i);
 	}
 
 	public static void print(Object o) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(o);
 	}
 
 	public static void print(String s) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(s);
 	}
 
 	public static void print(long l) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.print(l);
 	}
 
 	public static void printf(String format, Object... args) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.printf(format, args);
 	}
 
 	public static void printf(Locale l, String format, Object... args) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.printf(l, format, args);
 	}
 
 	public static void println() {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println();
 	}
 
 	public static void println(boolean x) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(x);
 	}
 
 	public static void println(char c) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(c);
 	}
 
 	public static void println(char[] c) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(c);
 	}
 
 	public static void println(double d) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(d);
 	}
 
 	public static void println(float f) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(f);
 	}
 
 	public static void println(int i) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(i);
 	}
 
 	public static void println(Object x) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(x);
 	}
 
 	public static void println(String s) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(s);
 	}
 
 	public static void println(long l) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.println(l);
 	}
 
 	public static void write(byte buf[], int off, int len) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.write(buf, off, len);
 	}
 
 	public static void write(int b) {
-		if (!open)
+		if (!getPrinterConfig().isOpen())
 			return;
 		ps.write(b);
 	}
